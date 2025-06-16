@@ -4,7 +4,7 @@
 # Development Roadmap (TODO)
 
 - [ ] Phase 1 – Application Development (Node.js)
-  - [ ] Create CSV file upload UI (using multer)
+  - [X] Create CSV file upload UI (using multer)
   - [ ] Parse CSV line by line and display on browser
   - [ ] Add basic error handling
   - [ ] Write Dockerfile and containerize the app
