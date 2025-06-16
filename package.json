@@ -1,0 +1,28 @@
+{
+  "name": "cloud-native-csv-processor",
+  "version": "1.0.0",
+  "description": "Cloud-native Node.js app to process and upload CSV files to S3, with infrastructure defined using Terraform and deployed via Helm",
+  "main": "index.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1692.0",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "multer": "^2.0.1"
+  },
+  "devDependencies": {
+    "jest": "^30.0.0",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.1"
+  }
+}
