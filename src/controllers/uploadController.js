@@ -1,6 +1,7 @@
 const fs = require('fs');
 const readline = require('readline');
 const path = require('path');
+const { parseCsvLine } = require('../utils/csvParser');
 
 exports.parseCsv = async (req, res) => {
   if (!req.file) {
@@ -17,18 +18,13 @@ exports.parseCsv = async (req, res) => {
     });
 
     for await (const line of rl) {
-    if (!line.trim()) continue; // skip empty lines
-    const [id, name, price] = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/); // split by comma not inside quotes
-    
-    rows.push({
-        product_id: id.replace(/"/g, ''),
-        product_name: name.replace(/"/g, ''),
-        price: price.replace(/"/g, ''),
-    });
+      const parsed = parseCsvLine(line);
+      if (parsed) {
+        rows.push(parsed);
+      }
     }
 
     res.status(200).json({ rows });
-
   } catch (err) {
     console.error('CSV parsing error:', err);
     res.status(500).send('Failed to read CSV file.');
