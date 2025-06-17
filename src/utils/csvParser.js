@@ -1,6 +1,7 @@
 exports.parseCsvLine = (line) => {
   if (!line || !line.trim()) return null;
 
+  // Split on commas not enclosed in quotes (handles fields with commas inside quotes)
   const [id, name, price] = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
 
   return {
