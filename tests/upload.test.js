@@ -12,6 +12,10 @@ describe('POST /api/upload', () => {
       .post('/api/upload')
       .attach('csvFile', path.join(__dirname, 'test-data.csv'));
 
+    if (res.statusCode !== 200) {
+      console.error('Upload test failed:', res.body, res.text);
+    }
+
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('rows');
     expect(Array.isArray(res.body.rows)).toBe(true);
