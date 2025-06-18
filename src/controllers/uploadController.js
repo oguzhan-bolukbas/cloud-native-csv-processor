@@ -2,6 +2,8 @@ const fs = require('fs');
 const readline = require('readline');
 const path = require('path');
 const { parseCsvLine } = require('../utils/csvParser');
+const { uploadFileToS3 } = require('../utils/s3Uploader');
+
 
 exports.parseCsv = async (req, res) => {
   if (!req.file) {
@@ -24,7 +26,18 @@ exports.parseCsv = async (req, res) => {
       }
     }
 
-    res.status(200).json({ rows });
+    // Upload to S3
+    const s3Result = await uploadFileToS3(filePath, req.file.originalname);
+
+    res.status(200).json({
+      rows,
+      uploaded_to_s3: {
+        bucket: s3Result.Bucket,
+        key: s3Result.Key,
+        location: s3Result.Location,
+      },
+    });
+
   } catch (err) {
     console.error('CSV parsing error:', err);
     res.status(500).send('Failed to read CSV file.');
