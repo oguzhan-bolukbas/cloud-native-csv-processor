@@ -6,6 +6,11 @@ pipeline {
                 checkout scm
             }
         }
+        stage('Set Env Vars') {
+            steps {
+                sh 'set -a && [ -f .env ] && . .env && set +a'
+            }
+        }
         stage('Install & Test') {
             steps {
                 sh 'npm install'
