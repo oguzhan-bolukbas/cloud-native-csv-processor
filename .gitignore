@@ -136,3 +136,6 @@ dist
 .pnp.*
 
 .npm-cache/
+
+# Given documents for the case stored here
+business-case-docs/
