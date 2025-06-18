@@ -6,9 +6,17 @@ pipeline {
                 checkout scm
             }
         }
+        stage('Debug Working Directory') {
+            steps {
+                sh 'pwd'
+                sh 'ls -l'
+            }
+        }
         stage('Set Env Vars') {
             steps {
-                sh 'set -a && [ -f .env ] && . .env && set +a'
+                dir('cloud-native-csv-processor') {
+                    sh 'set -a && [ -f .env ] && . .env && set +a'
+                }
             }
         }
         stage('Install & Test') {
