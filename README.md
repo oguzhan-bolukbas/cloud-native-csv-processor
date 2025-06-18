@@ -4,7 +4,7 @@
 ---
 
 **For a complete local Kubernetes setup and secret management guide, see:**
-[Local Kubernetes & AWS Secrets Store CSI Driver Setup Guide](./K8S_AWS_Secrets_Setup.md)
+[Local Kubernetes & AWS Secrets Store CSI Driver Setup Guide](./LOCAL_K8S_SETUP_GUIDE.md)
 
 ---
 
