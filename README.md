@@ -5,8 +5,8 @@
 
 - [ ] Phase 1 – Application Development (Node.js)
   - [X] Create CSV file upload UI (using multer)
-  - [ ] Parse CSV line by line and display on browser
-  - [ ] Add basic error handling
+  - [X] Parse CSV line by line and display on browser
+  - [X] Add basic error handling
   - [ ] Write Dockerfile and containerize the app
   - [ ] Perform local tests
 
