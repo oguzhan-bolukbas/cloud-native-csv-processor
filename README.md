@@ -17,10 +17,11 @@
   - [X] Plan S3 lifecycle rules for transition to Glacier
 
 - [ ] Phase 3 – CI/CD & Image Publishing
-  - [ ] Run Jenkins locally in a container for CI/CD pipeline
-  - [ ] Build and test Docker image automatically
-  - [ ] Push Docker image to DockerHub (public repository)
+  - [X] Run Jenkins locally in a container for CI/CD pipeline
+  - [X] Build and test Docker image automatically
+  - [X] Push Docker image to DockerHub (public repository)
   - [ ] Use the published DockerHub image for Kubernetes deployments
+  - [ ] Deploy to Kubernetes using Helm in Jenkins pipeline
 
 - [ ] Phase 4 – Kubernetes YAML and Helm Chart
   - [ ] Write deployment manifests including Nginx and Node.js app
@@ -39,10 +40,3 @@
   - [ ] Define EKS cluster and node groups (on-demand + spot)
   - [ ] Configure IAM roles and OIDC provider
   - [ ] Deploy application to cloud environment using Helm
-
-- [ ] Phase 7 – CI/CD Automation
-  - [ ] Create GitHub Actions workflows for testing and linting
-  - [ ] Automate Docker image build and push to DockerHub
-  - [ ] Integrate Helm deploy into the pipeline
-  - [ ] Secure secret management in CI/CD workflows
-
