@@ -5,8 +5,6 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
         AWS_REGION = credentials('AWS_REGION')
         S3_BUCKET_NAME = credentials('S3_BUCKET_NAME')
-        DOCKERHUB_USERNAME = credentials('DOCKERHUB_USERNAME')
-        DOCKERHUB_PASSWORD = credentials('DOCKERHUB_PASSWORD')
         DOCKER_IMAGE_NAME = credentials('DOCKER_IMAGE_NAME')
         DOCKER_IMAGE_TAG = credentials('DOCKER_IMAGE_TAG')
     }
@@ -39,7 +37,9 @@ pipeline {
     }
     post {
         always {
-            sh 'docker logout'
+            node {
+                sh 'docker logout'
+            }
         }
     }
 }
