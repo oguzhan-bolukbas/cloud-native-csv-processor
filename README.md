@@ -1,6 +1,13 @@
 # cloud-native-csv-processor
     Cloud-native Node.js app to process and upload CSV files to S3, with infrastructure defined using Terraform and deployed via Helm
 
+---
+
+**For a complete local Kubernetes setup and secret management guide, see:**
+[Local Kubernetes & AWS Secrets Store CSI Driver Setup Guide](./LOCAL_K8S_SETUP_GUIDE.md)
+
+---
+
 # Development Roadmap (TODO)
 
 - [X] Phase 1 – Application Development (Node.js)
@@ -25,9 +32,9 @@
   - [ ] Deploy to Kubernetes using Helm in Jenkins pipeline
 
 - [ ] Phase 4 – Kubernetes YAML and Helm Chart
-  - [ ] Write deployment manifests including Nginx and Node.js app
-  - [ ] Expose the application via a Kubernetes Service
-  - [ ] Define ConfigMap and Secret resources
+  - [X] Write deployment manifests including Nginx and Node.js app
+  - [X] Expose the application via a Kubernetes Service
+  - [X] Define ConfigMap and Secret resources
   - [ ] Create reusable and parameterized Helm chart
   - [ ] Configure shared volume so Nginx serves static files
 
