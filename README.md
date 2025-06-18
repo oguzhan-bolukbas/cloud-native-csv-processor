@@ -3,18 +3,18 @@
 
 # Development Roadmap (TODO)
 
-- [ ] Phase 1 – Application Development (Node.js)
+- [X] Phase 1 – Application Development (Node.js)
   - [X] Create CSV file upload UI (using multer)
   - [X] Parse CSV line by line and display on browser
   - [X] Add basic error handling
-  - [ ] Write Dockerfile and containerize the app
-  - [ ] Perform local tests
+  - [X] Write Dockerfile and containerize the app
+  - [X] Perform local tests
 
-- [ ] Phase 2 – S3 Integration
-  - [ ] Implement file upload to S3 using AWS SDK or similar library
-  - [ ] Manage AWS credentials with `.env` file
-  - [ ] Test AWS S3 integration locally
-  - [ ] Plan S3 lifecycle rules for transition to Glacier
+- [X] Phase 2 – S3 Integration
+  - [X] Implement file upload to S3 using AWS SDK or similar library
+  - [X] Manage AWS credentials with `.env` file
+  - [X] Test AWS S3 integration locally
+  - [X] Plan S3 lifecycle rules for transition to Glacier
 
 - [ ] Phase 3 – Kubernetes YAML and Helm Chart
   - [ ] Write deployment manifests including Nginx and Node.js app
