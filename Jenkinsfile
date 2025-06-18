@@ -14,9 +14,8 @@ pipeline {
         }
         stage('Set Env Vars') {
             steps {
-                dir('cloud-native-csv-processor') {
-                    sh 'set -a && [ -f .env ] && . .env && set +a'
-                }
+                sh 'set -a && [ -f .env ] && . .env && set +a'
+                sh 'echo DOCKER_IMAGE_NAME=$DOCKER_IMAGE_NAME'
             }
         }
         stage('Install & Test') {
