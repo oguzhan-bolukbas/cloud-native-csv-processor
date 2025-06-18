@@ -1,6 +1,13 @@
 # cloud-native-csv-processor
     Cloud-native Node.js app to process and upload CSV files to S3, with infrastructure defined using Terraform and deployed via Helm
 
+---
+
+**For a complete local Kubernetes setup and secret management guide, see:**
+[Local Kubernetes & AWS Secrets Store CSI Driver Setup Guide](./K8S_AWS_Secrets_Setup.md)
+
+---
+
 # Development Roadmap (TODO)
 
 - [X] Phase 1 – Application Development (Node.js)
