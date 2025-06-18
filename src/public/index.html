@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CSV Uploader</title>
+</head>
+<body>
+  <h1>Upload CSV File</h1>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="csvFile" id="csvFile" required />
+    <button type="submit">Upload</button>
+  </form>
+
+  <div id="output"></div>
+
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fileInput = document.getElementById('csvFile');
+      const formData = new FormData();
+      formData.append('csvFile', fileInput.files[0]);
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+      const output = document.getElementById('output');
+
+      if (res.ok) {
+        const table = document.createElement('table');
+        table.border = 1;
+
+        const header = document.createElement('tr');
+        ['Product ID', 'Product Name', 'Price'].forEach(text => {
+          const th = document.createElement('th');
+          th.textContent = text;
+          header.appendChild(th);
+        });
+        table.appendChild(header);
+
+        data.rows.forEach(row => {
+          const tr = document.createElement('tr');
+          [row.product_id, row.product_name, row.price].forEach(text => {
+            const td = document.createElement('td');
+            td.textContent = text;
+            tr.appendChild(td);
+          });
+          table.appendChild(tr);
+        });
+
+        output.innerHTML = '';
+        output.appendChild(table);
+      } else {
+        output.innerHTML = `<p style="color:red;">Upload failed: ${data.message || 'Unknown error'}</p>`;
+      }
+    });
+  </script>
+</body>
+</html>
