@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-app-service
+  labels:
+    app: nginx-app
+spec:
+  type: ClusterIP
+  selector:
+    app: nginx-app
+  ports:
+    - name: http-nginx
+      port: 80
+      targetPort: 80
+    - name: http-nodejs
+      port: 3000
+      targetPort: 3000
