@@ -9,6 +9,7 @@
   - [X] Add basic error handling
   - [X] Write Dockerfile and containerize the app
   - [X] Perform local tests
+  - [X] Implement automated tests
 
 - [X] Phase 2 – S3 Integration
   - [X] Implement file upload to S3 using AWS SDK or similar library
@@ -25,6 +26,7 @@
 
 - [ ] Phase 4 – Kubernetes YAML and Helm Chart
   - [ ] Write deployment manifests including Nginx and Node.js app
+  - [ ] Expose the application via a Kubernetes Service
   - [ ] Define ConfigMap and Secret resources
   - [ ] Create reusable and parameterized Helm chart
   - [ ] Configure shared volume so Nginx serves static files
@@ -40,3 +42,7 @@
   - [ ] Define EKS cluster and node groups (on-demand + spot)
   - [ ] Configure IAM roles and OIDC provider
   - [ ] Deploy application to cloud environment using Helm
+
+- [ ] Phase 7 – Documentation & Architecture
+  - [ ] Prepare project documentation
+  - [ ] Create architecture diagram
