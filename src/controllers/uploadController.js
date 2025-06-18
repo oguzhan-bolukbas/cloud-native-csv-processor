@@ -13,6 +13,7 @@ exports.parseCsv = async (req, res) => {
   const filePath = path.resolve(req.file.path);
   const rows = [];
 
+  // CSV parsing
   try {
     const rl = readline.createInterface({
       input: fs.createReadStream(filePath),
@@ -25,10 +26,17 @@ exports.parseCsv = async (req, res) => {
         rows.push(parsed);
       }
     }
+  } catch (err) {
+    console.error('CSV parsing error:', err);
+    return res.status(500).json({
+      error: 'Failed to read or parse CSV file',
+      details: err && err.message ? err.message : err
+    });
+  }
 
-    // Upload to S3
+  // S3 upload
+  try {
     const s3Result = await uploadFileToS3(filePath, req.file.originalname);
-
     res.status(200).json({
       rows,
       uploaded_to_s3: {
@@ -37,9 +45,11 @@ exports.parseCsv = async (req, res) => {
         location: s3Result.Location,
       },
     });
-
   } catch (err) {
-    console.error('CSV parsing error:', err);
-    res.status(500).send('Failed to read CSV file.');
+    console.error('S3 upload error:', err);
+    res.status(500).json({
+      error: 'Failed to upload file to S3',
+      details: err && err.message ? err.message : err
+    });
   }
 };
