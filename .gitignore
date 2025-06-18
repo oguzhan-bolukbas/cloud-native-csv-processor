@@ -139,3 +139,6 @@ dist
 
 # Given documents for the case stored here
 business-case-docs/
+
+# The uploaded csv files
+src/uploads/
