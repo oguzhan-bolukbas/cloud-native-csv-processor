@@ -1,0 +1,12 @@
+FROM jenkins/jenkins:lts
+
+USER root
+
+# Install Node.js, npm, and Docker CLI
+RUN apt-get update && \
+    apt-get install -y curl gnupg2 && \
+    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs && \
+    apt-get install -y docker.io
+
+USER jenkins
