@@ -1,0 +1,46 @@
+# Default values for csv-processor
+replicaCount: 1
+
+image:
+  repository: oguzhanbolukbas/cloud-native-csv-processor
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  port: 3000
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+podAnnotations: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+env:
+  NODE_ENV: production
+
+# AWS Credentials configuration
+secrets:
+  # Base64 encoded secrets
+  AWS_ACCESS_KEY_ID: ""      # echo -n 'your-access-key' | base64
+  AWS_SECRET_ACCESS_KEY: ""  # echo -n 'your-secret-key' | base64
+
+configmap:
+  name: app-config
+  tier: backend
+  AWS_REGION: eu-north-1
+  S3_BUCKET_NAME: cloud-native-csv-processor-uploads-business-case
+  DOCKER_IMAGE_NAME: oguzhanbolukbas/cloud-native-csv-processor
+  DOCKER_IMAGE_TAG: latest
