@@ -29,6 +29,16 @@ spec:
           env:
             - name: NODE_ENV
               value: "production"
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: AWS_REGION
+            - name: S3_BUCKET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: S3_BUCKET_NAME
             - name: DOCKERHUB_USERNAME
               valueFrom:
                 secretKeyRef:
