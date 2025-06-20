@@ -3,6 +3,27 @@
 
 ---
 
+## Quick Start - Deployment
+
+Deploy to Kubernetes using the Helm chart:
+
+```bash
+# Deploy the application
+helm install csv-processor ./helm/csv-processor
+
+# Access the application
+kubectl port-forward service/csv-processor-nginx 8080:80
+# Open http://localhost:8080 in your browser
+
+# Upgrade deployment
+helm upgrade csv-processor ./helm/csv-processor
+
+# Uninstall
+helm uninstall csv-processor
+```
+
+---
+
 **For a complete local Kubernetes setup and secret management guide, see:**
 [Local Kubernetes & AWS Secrets Store CSI Driver Setup Guide](./LOCAL_K8S_SETUP_GUIDE.md)
 
@@ -31,18 +52,18 @@
   - [ ] Use the published DockerHub image for Kubernetes deployments
   - [ ] Deploy to Kubernetes using Helm in Jenkins pipeline
 
-- [ ] Phase 4 – Kubernetes YAML and Helm Chart
+- [X] Phase 4 – Kubernetes YAML and Helm Chart
   - [X] Write deployment manifests including Nginx and Node.js app
   - [X] Expose the application via a Kubernetes Service
   - [X] Define ConfigMap and Secret resources
-  - [ ] Create reusable and parameterized Helm chart
-  - [ ] Configure shared volume so Nginx serves static files
+  - [X] Create reusable and parameterized Helm chart
+  - [X] Configure shared volume so Nginx serves static files
 
-- [ ] Phase 5 – Deploy to Minikube
-  - [ ] Deploy Helm chart on Minikube
-  - [ ] Access app via `kubectl port-forward` or `minikube service`
-  - [ ] Test Horizontal Pod Autoscaler (HPA) for autoscaling
-  - [ ] Set up metrics-server and run CPU/memory based autoscaling tests
+- [X] Phase 5 – Deploy to Minikube
+  - [X] Deploy Helm chart on Minikube
+  - [X] Access app via `kubectl port-forward` or `minikube service`
+  - [X] Test Horizontal Pod Autoscaler (HPA) for autoscaling
+  - [X] Set up metrics-server and run CPU/memory based autoscaling tests
 
 - [ ] Phase 6 – Terraform Cloud Infrastructure Setup
   - [ ] Create VPC, subnets, and networking resources with Terraform

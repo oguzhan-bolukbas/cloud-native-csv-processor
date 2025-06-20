@@ -65,23 +65,45 @@ kubectl get pods -n kube-system | grep csi
 kubectl get pods -n kube-system | grep aws
 ```
 
-### 3.4 Apply Kubernetes Manifests (App, SecretProviderClass, etc.)
-_This will deploy your app, SecretProviderClass, and all required resources. The app will not start correctly unless the CSI driver and AWS provider are running and secrets are synced._
+### 3.4 Deploy the Application using Helm Chart
+_This will deploy your app using the Helm chart, which includes SecretProviderClass, deployments, services, and all required resources. The app will not start correctly unless the CSI driver and AWS provider are running and secrets are synced._
+
 ```sh
-kubectl apply -f k8s/
+# Install the Helm chart
+helm install csv-processor ./helm/csv-processor
+
+# Or upgrade if already installed
+helm upgrade csv-processor ./helm/csv-processor
+
+# Check the deployment status
+kubectl get pods
+kubectl get services
 ```
 
 ### 3.5 Access the App
 ```sh
-minikube service <service-name>
-# Or, get the NodePort and access via browser
-kubectl get svc
+# Get service information
+kubectl get services
+
+# Access the nginx service (frontend)
+minikube service csv-processor-nginx
+
+# Or use port-forwarding to access the nginx service
+kubectl port-forward service/csv-processor-nginx 8080:80
+
+# Access the backend API directly (if needed)
+kubectl port-forward service/csv-processor 3000:3000
 ```
 
 ---
 
 ## 4. Verification & Troubleshooting
 
+- Check Helm deployment status:
+  ```sh
+  helm list
+  helm status csv-processor
+  ```
 - Check pods:
   ```sh
   kubectl get pods -A
@@ -95,15 +117,25 @@ kubectl get svc
   kubectl describe pod <pod-name>
   kubectl describe secret <secret-name>
   ```
+- View Helm chart values:
+  ```sh
+  helm get values csv-processor
+  ```
+- Uninstall if needed:
+  ```sh
+  helm uninstall csv-processor
+  ```
 - Common issues:
-  - Missing CRDs: Ensure you applied the CRDs before other manifests.
+  - Missing CRDs: Ensure you applied the CRDs before deploying the Helm chart.
   - Pod errors: Check for missing secrets, misconfigured SecretProviderClass, or AWS permissions.
   - App not starting: Make sure the CSI driver and AWS provider pods are running and secrets are synced.
+  - Helm deployment issues: Use `helm status` and `kubectl describe` to debug.
 
 ---
 
 ## 5. References
 - [Minikube Documentation](https://minikube.sigs.k8s.io/docs/)
+- [Helm Documentation](https://helm.sh/docs/)
 - [Secrets Store CSI Driver](https://github.com/kubernetes-sigs/secrets-store-csi-driver)
 - [AWS Provider for CSI Driver](https://github.com/aws/secrets-store-csi-driver-provider-aws)
 
