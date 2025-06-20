@@ -51,6 +51,13 @@ spec:
                   key: AWS_SECRET_ACCESS_KEY
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: static-files
+              mountPath: /app/public/static
+      volumes:
+        - name: static-files
+          persistentVolumeClaim:
+            claimName: shared-static-pvc
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
