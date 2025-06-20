@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: nginx-config
   labels:
-    app: {{ include "csv-processor.fullname" . }}-nginx
+    {{- include "csv-processor.nginx.labels" . | nindent 4 }}
 data:
   nginx.conf: |
     server {

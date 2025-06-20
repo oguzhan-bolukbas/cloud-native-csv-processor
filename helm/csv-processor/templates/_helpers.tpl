@@ -49,3 +49,24 @@ Selector labels
 app.kubernetes.io/name: {{ include "csv-processor.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+{{/*
+Nginx selector labels
+*/}}
+{{- define "csv-processor.nginx.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "csv-processor.name" . }}-nginx
+app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/component: nginx
+{{- end }}
+
+{{/*
+Nginx labels
+*/}}
+{{- define "csv-processor.nginx.labels" -}}
+helm.sh/chart: {{ include "csv-processor.chart" . }}
+{{ include "csv-processor.nginx.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
