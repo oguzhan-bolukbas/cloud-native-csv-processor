@@ -11,6 +11,7 @@ fullnameOverride: ""
 
 service:
   port: 3000
+  nginx_port: 80
 
 resources:
   limits:
@@ -44,3 +45,50 @@ configmap:
   S3_BUCKET_NAME: cloud-native-csv-processor-uploads-business-case
   DOCKER_IMAGE_NAME: oguzhanbolukbas/cloud-native-csv-processor
   DOCKER_IMAGE_TAG: latest
+
+# Nginx deployment values
+nginx:
+  replicaCount: 1
+  image:
+    repository: nginx
+    tag: latest
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  hpa:
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 50
+
+# API HPA values
+hpa:
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 50
+
+# StorageClass values
+storageClass:
+  name: standard  # Use Minikube's default StorageClass for local testing
+
+###
+# StorageClass values
+#storageClass:
+#  name: shared-static-storage
+#  provisioner: kubernetes.io/host-path
+#  reclaimPolicy: Retain
+#  volumeBindingMode: WaitForFirstConsumer
+###
+
+# PVC values
+pvc:
+  name: shared-static-pvc
+  accessMode: ReadWriteOnce
+  size: 1Gi
