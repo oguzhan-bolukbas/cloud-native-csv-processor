@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.pvc.name | default "shared-static-pvc" }}
+spec:
+  accessModes:
+    - {{ .Values.pvc.accessMode | default "ReadWriteOnce" }}
+  resources:
+    requests:
+      storage: {{ .Values.pvc.size | default "1Gi" }}
+  storageClassName: {{ .Values.storageClass.name | default "standard" }}
+#  storageClassName: {{ .Values.storageClass.name | default "shared-static-storage" }}
