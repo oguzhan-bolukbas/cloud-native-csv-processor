@@ -3,16 +3,16 @@ kind: Deployment
 metadata:
   name: {{ include "csv-processor.fullname" . }}-nginx
   labels:
-    {{- include "csv-processor.labels" . | nindent 4 }}
+    {{- include "csv-processor.nginx.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.nginx.replicaCount | default 1 }}
   selector:
     matchLabels:
-      app: {{ include "csv-processor.fullname" . }}-nginx
+      {{- include "csv-processor.nginx.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        app: {{ include "csv-processor.fullname" . }}-nginx
+        {{- include "csv-processor.nginx.selectorLabels" . | nindent 8 }}
     spec:
       containers:
         - name: nginx
