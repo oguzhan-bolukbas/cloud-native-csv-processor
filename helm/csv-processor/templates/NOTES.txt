@@ -1,0 +1,303 @@
+================================================================================
+🚀 CSV Processor successfully deployed!
+================================================================================
+
+Release: {{ .Release.Name }}
+Namespace: {{ .Release.Namespace }}
+Chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+
+📋 Quick Access Commands:
+{{- if contains "ClusterIP" .Values.service.type }}
+  # Port forward to access the application:
+  kubectl port-forward service/{{ include "csv-processor.fullname" . }}-nginx 8080:80
+  
+  # Then visit: http://localhost:8080
+{{- end }}
+
+  # Check deployment status:
+  kubectl get pods -l app.kubernetes.io/instance={{ .Release.Name }}
+
+================================================================================
+
+# CSV Processor Helm Chart - Notes
+
+## Overview
+This Helm chart deploys a cloud-native CSV processing application with nginx reverse proxy on Kubernetes.
+
+## Architecture
+
+### Components
+1. **Main Application (csv-processor)**
+   - Node.js/Express application
+   - Handles CSV file uploads and processing
+   - Integrates with AWS S3 for file storage
+   - Runs on port 3000
+
+2. **Nginx Reverse Proxy (csv-processor-nginx)**
+   - Acts as reverse proxy and static file server
+   - Handles incoming HTTP requests on port 80
+   - Proxies dynamic requests to backend application
+   - Serves static files from shared storage
+
+3. **Shared Storage**
+   - PersistentVolume for static file sharing
+   - Mounted on both nginx and application pods
+   - Uses standard StorageClass (configurable)
+
+### Services
+- `csv-processor`: Backend application service (port 3000)
+- `csv-processor-nginx`: Frontend nginx service (port 80)
+
+### Labeling Strategy
+This chart follows Kubernetes and Helm labeling best practices:
+
+**Standard Labels Applied to All Resources:**
+- `app.kubernetes.io/name`: Component name (csv-processor or csv-processor-nginx)
+- `app.kubernetes.io/instance`: Helm release name
+- `app.kubernetes.io/version`: Chart app version
+- `app.kubernetes.io/managed-by`: Helm
+- `helm.sh/chart`: Chart name and version
+
+**Component-Specific Labels:**
+- Nginx component includes: `app.kubernetes.io/component=nginx`
+
+**Selector Labels:**
+- Main app selector: `app.kubernetes.io/name=csv-processor, app.kubernetes.io/instance=<release>`
+- Nginx selector: `app.kubernetes.io/name=csv-processor-nginx, app.kubernetes.io/instance=<release>, app.kubernetes.io/component=nginx`
+
+## Configuration
+
+### Key Values
+```yaml
+# Application settings
+replicaCount: 1
+image:
+  repository: oguzhanbolukbas/cloud-native-csv-processor
+  tag: latest
+
+# Service configuration
+service:
+  port: 3000        # Backend application port
+  nginx_port: 80    # Nginx port (used in templates)
+
+# AWS Configuration (via ConfigMap and Secrets)
+configmap:
+  AWS_REGION: eu-north-1
+  S3_BUCKET_NAME: cloud-native-csv-processor-uploads-business-case
+
+# Resource limits
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+```
+
+### Required Secrets
+Before deployment, create AWS credentials:
+```bash
+kubectl create secret generic csv-processor-aws-credentials \
+  --from-literal=AWS_ACCESS_KEY_ID=your-access-key \
+  --from-literal=AWS_SECRET_ACCESS_KEY=your-secret-key
+```
+
+Or set in values.yaml (base64 encoded):
+```yaml
+secrets:
+  AWS_ACCESS_KEY_ID: "base64-encoded-key"
+  AWS_SECRET_ACCESS_KEY: "base64-encoded-secret"
+```
+
+## Deployment
+
+### Installation
+```bash
+# Install the chart
+helm install csv-processor ./helm/csv-processor/
+
+# Install with custom values
+helm install csv-processor ./helm/csv-processor/ -f custom-values.yaml
+
+# Upgrade existing deployment
+helm upgrade csv-processor ./helm/csv-processor/
+```
+
+### Verification
+```bash
+# Check deployment status
+kubectl get pods -l app.kubernetes.io/name=csv-processor
+kubectl get pods -l app=csv-processor-nginx
+
+# Check services
+kubectl get svc
+
+# Test the application
+kubectl port-forward service/csv-processor-nginx 8080:80
+curl http://localhost:8080/
+```
+
+## Troubleshooting
+
+### Common Issues
+
+#### 1. 502 Bad Gateway Error
+**Symptoms:** Nginx returns 502 error, logs show infinite loops
+**Cause:** Nginx configuration proxying to itself instead of backend
+**Solution:** Verify nginx ConfigMap proxy_pass points to backend service:
+```nginx
+proxy_pass http://csv-processor:3000;
+```
+
+#### 2. Pods Stuck in Pending State
+**Symptoms:** Pods remain in Pending status
+**Common Causes:**
+- PVC not bound (check storage)
+- Missing secrets (AWS credentials)
+- Resource constraints
+
+**Debug Commands:**
+```bash
+kubectl describe pod <pod-name>
+kubectl get pvc
+kubectl get secrets
+```
+
+#### 3. Service Selector Issues
+**Symptoms:** Services cannot find pods, no endpoints
+**Cause:** Inconsistent labeling between deployments and services
+**Solution:** Verify consistent labeling using standard Helm conventions:
+```bash
+# Check pod labels
+kubectl get pods --show-labels
+
+# Verify service selectors match pod labels
+kubectl describe service csv-processor
+kubectl describe service csv-processor-nginx
+```
+
+**Standard Labels:**
+- Main application: `app.kubernetes.io/name=csv-processor`
+- Nginx component: `app.kubernetes.io/name=csv-processor-nginx` with `app.kubernetes.io/component=nginx`
+- Both include: `app.kubernetes.io/instance=<release-name>`
+
+#### 3. Application Cannot Connect to S3
+**Symptoms:** File upload failures, S3 connection errors
+**Solution:** Verify AWS credentials and region configuration:
+```bash
+kubectl get secret csv-processor-aws-credentials -o yaml
+kubectl get configmap app-config -o yaml
+```
+
+#### 4. Static Files Not Served
+**Symptoms:** 404 errors for static content
+**Cause:** PVC mount issues or nginx configuration
+**Solution:** Check volume mounts and nginx static file configuration
+
+### Useful Debug Commands
+```bash
+# Check nginx configuration
+kubectl get configmap nginx-config -o yaml
+
+# View application logs
+kubectl logs -l app.kubernetes.io/name=csv-processor
+
+# View nginx logs
+kubectl logs -l app=csv-processor-nginx
+
+# Inspect services and endpoints
+kubectl describe service csv-processor
+kubectl describe service csv-processor-nginx
+kubectl get endpoints
+```
+
+## Scaling
+
+### Horizontal Pod Autoscaler (HPA)
+Both the application and nginx deployments support HPA:
+
+```yaml
+# Application HPA
+hpa:
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 50
+
+# Nginx HPA
+nginx:
+  hpa:
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 50
+```
+
+Enable HPA:
+```bash
+kubectl apply -f templates/hpa-api.yaml
+kubectl apply -f templates/hpa-nginx.yaml
+```
+
+## Security Considerations
+
+1. **Secrets Management**
+   - Use Kubernetes secrets for AWS credentials
+   - Consider using AWS IAM roles for service accounts (IRSA)
+   - Rotate credentials regularly
+
+2. **Network Policies**
+   - Implement network policies to restrict pod-to-pod communication
+   - Limit external access to nginx service only
+
+3. **Resource Limits**
+   - Set appropriate CPU and memory limits
+   - Monitor resource usage and adjust as needed
+
+## Monitoring
+
+### Recommended Metrics
+- Pod CPU and memory usage
+- HTTP response times and error rates
+- File upload success/failure rates
+- S3 operation metrics
+
+### Health Checks
+The application should implement:
+- Liveness probes on /health endpoint
+- Readiness probes to ensure S3 connectivity
+
+## Maintenance
+
+### Backup Considerations
+- PVC data (if storing files locally)
+- Application configuration
+- AWS S3 bucket (external backup strategy)
+
+### Updates
+1. Update container image tag in values.yaml
+2. Run `helm upgrade csv-processor ./helm/csv-processor/`
+3. Monitor rollout: `kubectl rollout status deployment/csv-processor`
+
+## Development
+
+### Local Testing
+```bash
+# Port forward for local access
+kubectl port-forward service/csv-processor-nginx 8080:80
+
+# Access application
+open http://localhost:8080
+```
+
+### Configuration Changes
+1. Modify values.yaml or template files
+2. Uninstall and reinstall for ConfigMap changes:
+   ```bash
+   helm uninstall csv-processor
+   helm install csv-processor ./helm/csv-processor/
+   ```
+3. For other changes, use `helm upgrade`
+
+---
+
+**Note:** This chart was designed for a cloud-native CSV processing application with AWS S3 integration. Ensure proper AWS credentials and permissions are configured before deployment.
