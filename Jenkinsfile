@@ -20,6 +20,24 @@ pipeline {
                 sh 'npm test'
             }
         }
+        stage('Setup Docker Buildx') {
+            steps {
+                sh '''
+                    # Check if buildx is available
+                    if ! docker buildx version >/dev/null 2>&1; then
+                        echo "Installing Docker Buildx..."
+                        mkdir -p ~/.docker/cli-plugins/
+                        curl -SL https://github.com/docker/buildx/releases/download/v0.12.1/buildx-v0.12.1.linux-amd64 -o ~/.docker/cli-plugins/docker-buildx
+                        chmod a+x ~/.docker/cli-plugins/docker-buildx
+                        docker buildx version
+                    fi
+                    
+                    # Create and use buildx builder
+                    docker buildx create --name multiarch-builder --use || docker buildx use multiarch-builder
+                    docker buildx inspect --bootstrap
+                '''
+            }
+        }
         stage('Build Multi-Platform Docker Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
