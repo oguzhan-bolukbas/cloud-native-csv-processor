@@ -16,11 +16,11 @@ service:
 
 resources:
   limits:
-    cpu: 500m
-    memory: 512Mi
+    cpu: 300m
+    memory: 128Mi
   requests:
-    cpu: 250m
-    memory: 256Mi
+    cpu: 100m
+    memory: 64Mi
 
 podAnnotations: {}
 
@@ -56,11 +56,11 @@ nginx:
     pullPolicy: IfNotPresent
   resources:
     limits:
-      cpu: 200m
-      memory: 256Mi
+      cpu: 50m
+      memory: 32Mi
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 10m
+      memory: 16Mi
   nodeSelector: {}
   tolerations: []
   affinity: {}
