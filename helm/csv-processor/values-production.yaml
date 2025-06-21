@@ -20,11 +20,11 @@ service:
 
 resources:
   limits:
-    cpu: 500m      # Increased for production workload
+    cpu: 300m
     memory: 512Mi
   requests:
-    cpu: 250m      # Higher baseline for production
-    memory: 256Mi
+    cpu: 15m
+    memory: 64Mi
 
 # Production environment
 env:
@@ -41,68 +41,67 @@ configmap:
   DOCKER_IMAGE_NAME: oguzhanbolukbas/cloud-native-csv-processor
   DOCKER_IMAGE_TAG: latest
 
-# Nginx deployment values - production optimized
+# Nginx deployment values - Free Tier optimized
 nginx:
-  replicaCount: 2  # HA setup
+  replicaCount: 1  # Single nginx instance for Free Tier
   image:
     repository: nginx
     tag: "1.25-alpine"  # Use specific version for production
     pullPolicy: IfNotPresent
   resources:
     limits:
-      cpu: 200m
-      memory: 256Mi
-    requests:
       cpu: 100m
-      memory: 128Mi
+      memory: 320Mi   # Increased to prevent OOMKilled
+    requests:
+      cpu: 5m
+      memory: 16Mi
   
-  # Production HPA settings
   hpa:
-    minReplicas: 2
-    maxReplicas: 10
-    targetCPUUtilizationPercentage: 70
+    minReplicas: 1    # Start with 1 for Free Tier
+    maxReplicas: 3    # Max 3 for Free Tier limits
+    targetCPUUtilizationPercentage: 50  # Higher threshold to prevent frequent scaling
     scaleDown:
-      stabilizationWindowSeconds: 300  # 5 minutes for production stability
+      stabilizationWindowSeconds: 300  # 5 minutes for stability
       percentPolicy:
         value: 25  # Conservative scale-down
         periodSeconds: 60
       podsPolicy:
-        value: 1
+        value: 1  # Remove 1 pod at a time
         periodSeconds: 60
       selectPolicy: "Min"  # Conservative approach
     scaleUp:
-      stabilizationWindowSeconds: 60
+      stabilizationWindowSeconds: 60   # 1 minute delay
       percentPolicy:
-        value: 50
+        value: 50  # 50% increase max
         periodSeconds: 30
       podsPolicy:
-        value: 2
+        value: 1  # Add 1 pod at a time
         periodSeconds: 30
-      selectPolicy: "Max"
+      selectPolicy: "Min"  # Conservative approach
 
-# API HPA values - production optimized
+# API HPA values - Free Tier optimized
 hpa:
-  minReplicas: 2
-  maxReplicas: 10
-  targetCPUUtilizationPercentage: 70
+  minReplicas: 1      # Start with 1 for Free Tier
+  maxReplicas: 3      # Max 3 for Free Tier limits
+  targetCPUUtilizationPercentage: 50  # Higher threshold to prevent frequent scaling
   scaleDown:
-    stabilizationWindowSeconds: 300
+    stabilizationWindowSeconds: 300  # 5 minutes for stability
     percentPolicy:
-      value: 25
+      value: 25  # Conservative scale-down
       periodSeconds: 60
     podsPolicy:
-      value: 1
+      value: 1  # Remove 1 pod at a time
       periodSeconds: 60
-    selectPolicy: "Min"
+    selectPolicy: "Min"  # Conservative approach
   scaleUp:
-    stabilizationWindowSeconds: 60
+    stabilizationWindowSeconds: 60   # 1 minute delay
     percentPolicy:
-      value: 50
+      value: 50  # 50% increase max
       periodSeconds: 30
     podsPolicy:
-      value: 2
+      value: 1  # Add 1 pod at a time
       periodSeconds: 30
-    selectPolicy: "Max"
+    selectPolicy: "Min"  # Conservative approach
 
 # Storage configuration
 storageClass:
@@ -111,26 +110,15 @@ storageClass:
 pvc:
   name: shared-static-pvc
   accessMode: ReadWriteOnce
-  size: 5Gi  # Increased for production
+  size: 1Gi  # Reduced to 1GB for Free Tier
 
 # Node selection and tolerations
-nodeSelector:
-  role: worker
+nodeSelector: {}  # Remove specific node selector for Free Tier flexibility
 
 tolerations: []
 
-affinity:
-  podAntiAffinity:
-    preferredDuringSchedulingIgnoredDuringExecution:
-    - weight: 100
-      podAffinityTerm:
-        labelSelector:
-          matchExpressions:
-          - key: app.kubernetes.io/name
-            operator: In
-            values:
-            - csv-processor
-        topologyKey: kubernetes.io/hostname
+# Remove pod anti-affinity for Free Tier (single node cluster)
+affinity: {}
 
 # Ingress configuration for AWS ALB
 ingress:
