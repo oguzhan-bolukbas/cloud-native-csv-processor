@@ -143,7 +143,17 @@ business-case-docs/
 # The uploaded csv files
 src/uploads/
 helm/csv-processor/values-override.yaml
+
+# Terraform
 .terraform/
 .terraform.lock.hcl
-terraform.tfstate*
+terraform.tfstate
+terraform.tfstate.backup
+tfplan
 *.tfplan
+*.tfvars
+!terraform.tfvars.example
+
+# Helm
+charts/
+*.tgz

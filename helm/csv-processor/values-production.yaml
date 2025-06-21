@@ -1,0 +1,188 @@
+# Production values for csv-processor
+# Override values for production EKS deployment with IRSA
+
+replicaCount: 2  # Start with 2 replicas for HA
+
+image:
+  repository: oguzhanbolukbas/cloud-native-csv-processor
+  tag: latest
+  pullPolicy: Always  # Use Always for latest tag in production
+
+# Service Account for IRSA
+serviceAccount:
+  create: false  # Will be created by deployment script with proper annotations
+  name: csv-processor-sa
+
+service:
+  type: ClusterIP
+  port: 3000
+  nginx_port: 80
+
+resources:
+  limits:
+    cpu: 500m      # Increased for production workload
+    memory: 512Mi
+  requests:
+    cpu: 250m      # Higher baseline for production
+    memory: 256Mi
+
+# Production environment
+env:
+  NODE_ENV: production
+
+# Remove secrets section - using IRSA instead
+# AWS credentials will be provided via IAM roles
+
+configmap:
+  name: app-config
+  tier: backend
+  AWS_REGION: eu-north-1
+  S3_BUCKET_NAME: cloud-native-csv-processor-uploads-business-case
+  DOCKER_IMAGE_NAME: oguzhanbolukbas/cloud-native-csv-processor
+  DOCKER_IMAGE_TAG: latest
+
+# Nginx deployment values - production optimized
+nginx:
+  replicaCount: 2  # HA setup
+  image:
+    repository: nginx
+    tag: "1.25-alpine"  # Use specific version for production
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  
+  # Production HPA settings
+  hpa:
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    scaleDown:
+      stabilizationWindowSeconds: 300  # 5 minutes for production stability
+      percentPolicy:
+        value: 25  # Conservative scale-down
+        periodSeconds: 60
+      podsPolicy:
+        value: 1
+        periodSeconds: 60
+      selectPolicy: "Min"  # Conservative approach
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      percentPolicy:
+        value: 50
+        periodSeconds: 30
+      podsPolicy:
+        value: 2
+        periodSeconds: 30
+      selectPolicy: "Max"
+
+# API HPA values - production optimized
+hpa:
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  scaleDown:
+    stabilizationWindowSeconds: 300
+    percentPolicy:
+      value: 25
+      periodSeconds: 60
+    podsPolicy:
+      value: 1
+      periodSeconds: 60
+    selectPolicy: "Min"
+  scaleUp:
+    stabilizationWindowSeconds: 60
+    percentPolicy:
+      value: 50
+      periodSeconds: 30
+    podsPolicy:
+      value: 2
+      periodSeconds: 30
+    selectPolicy: "Max"
+
+# Storage configuration
+storageClass:
+  name: gp2  # Use gp2 for EKS
+
+pvc:
+  name: shared-static-pvc
+  accessMode: ReadWriteOnce
+  size: 5Gi  # Increased for production
+
+# Node selection and tolerations
+nodeSelector:
+  role: worker
+
+tolerations: []
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchExpressions:
+          - key: app.kubernetes.io/name
+            operator: In
+            values:
+            - csv-processor
+        topologyKey: kubernetes.io/hostname
+
+# Ingress configuration for AWS ALB
+ingress:
+  enabled: true
+  ingressClassName: alb
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    alb.ingress.kubernetes.io/tags: Environment=production,Project=csv-processor
+    alb.ingress.kubernetes.io/healthcheck-path: /
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: "15"
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: "5"
+    alb.ingress.kubernetes.io/healthy-threshold-count: "2"
+    alb.ingress.kubernetes.io/unhealthy-threshold-count: "2"
+  hosts:
+    - host: ""  # No specific host, will accept all
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# Security context
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false  # App needs to write to uploads directory
+  capabilities:
+    drop:
+    - ALL
+
+# Probes for production
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 30
+  timeoutSeconds: 10
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
