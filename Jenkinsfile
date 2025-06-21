@@ -20,21 +20,22 @@ pipeline {
                 sh 'npm test'
             }
         }
-        stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t $DOCKER_IMAGE_NAME:$BUILD_NUMBER .'
-                sh 'docker build -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG .'
-            }
-        }
-        stage('Push to DockerHub') {
+        stage('Build Multi-Platform Docker Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
                     sh 'echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin'
-                    sh 'docker push $DOCKER_IMAGE_NAME:$BUILD_NUMBER'
-                    sh 'docker push $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG'
+                    sh """
+                        docker buildx build \\
+                            --platform linux/amd64,linux/arm64 \\
+                            --tag $DOCKER_IMAGE_NAME:$BUILD_NUMBER \\
+                            --tag $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG \\
+                            --push \\
+                            .
+                    """
                 }
             }
         }
+    }
     }
     post {
         always {
