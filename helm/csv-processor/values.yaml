@@ -68,12 +68,52 @@ nginx:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 50
+    # Scale-down behavior configuration
+    scaleDown:
+      stabilizationWindowSeconds: 120  # 2 minutes instead of default 5 minutes
+      percentPolicy:
+        value: 50  # Allow up to 50% of pods to be removed
+        periodSeconds: 60  # Every minute
+      podsPolicy:
+        value: 2  # Or remove up to 2 pods
+        periodSeconds: 60  # Every minute
+      selectPolicy: "Max"  # Use the more aggressive policy
+    # Scale-up behavior configuration
+    scaleUp:
+      stabilizationWindowSeconds: 0  # Immediate scale-up
+      percentPolicy:
+        value: 100  # Allow doubling of pods
+        periodSeconds: 15  # Every 15 seconds
+      podsPolicy:
+        value: 4  # Or add up to 4 pods
+        periodSeconds: 15  # Every 15 seconds
+      selectPolicy: "Max"  # Use the more aggressive policy
 
 # API HPA values
 hpa:
   minReplicas: 1
   maxReplicas: 5
   targetCPUUtilizationPercentage: 50
+  # Scale-down behavior configuration
+  scaleDown:
+    stabilizationWindowSeconds: 120  # 2 minutes instead of default 5 minutes
+    percentPolicy:
+      value: 50  # Allow up to 50% of pods to be removed
+      periodSeconds: 60  # Every minute
+    podsPolicy:
+      value: 2  # Or remove up to 2 pods
+      periodSeconds: 60  # Every minute
+    selectPolicy: "Max"  # Use the more aggressive policy
+  # Scale-up behavior configuration
+  scaleUp:
+    stabilizationWindowSeconds: 0  # Immediate scale-up
+    percentPolicy:
+      value: 100  # Allow doubling of pods
+      periodSeconds: 15  # Every 15 seconds
+    podsPolicy:
+      value: 4  # Or add up to 4 pods
+      periodSeconds: 15  # Every 15 seconds
+    selectPolicy: "Max"  # Use the more aggressive policy
 
 # StorageClass values
 storageClass:

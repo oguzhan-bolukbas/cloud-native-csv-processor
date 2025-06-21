@@ -11,6 +11,27 @@ spec:
     name: {{ include "csv-processor.fullname" . }}-nginx
   minReplicas: {{ .Values.nginx.hpa.minReplicas | default 1 }}
   maxReplicas: {{ .Values.nginx.hpa.maxReplicas | default 5 }}
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: {{ .Values.nginx.hpa.scaleDown.stabilizationWindowSeconds | default 120 }}
+      policies:
+      - type: Percent
+        value: {{ .Values.nginx.hpa.scaleDown.percentPolicy.value | default 50 }}
+        periodSeconds: {{ .Values.nginx.hpa.scaleDown.percentPolicy.periodSeconds | default 60 }}
+      - type: Pods
+        value: {{ .Values.nginx.hpa.scaleDown.podsPolicy.value | default 2 }}
+        periodSeconds: {{ .Values.nginx.hpa.scaleDown.podsPolicy.periodSeconds | default 60 }}
+      selectPolicy: {{ .Values.nginx.hpa.scaleDown.selectPolicy | default "Max" }}
+    scaleUp:
+      stabilizationWindowSeconds: {{ .Values.nginx.hpa.scaleUp.stabilizationWindowSeconds | default 0 }}
+      policies:
+      - type: Percent
+        value: {{ .Values.nginx.hpa.scaleUp.percentPolicy.value | default 100 }}
+        periodSeconds: {{ .Values.nginx.hpa.scaleUp.percentPolicy.periodSeconds | default 15 }}
+      - type: Pods
+        value: {{ .Values.nginx.hpa.scaleUp.podsPolicy.value | default 4 }}
+        periodSeconds: {{ .Values.nginx.hpa.scaleUp.podsPolicy.periodSeconds | default 15 }}
+      selectPolicy: {{ .Values.nginx.hpa.scaleUp.selectPolicy | default "Max" }}
   metrics:
     - type: Resource
       resource:
