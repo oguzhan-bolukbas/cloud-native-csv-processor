@@ -6,7 +6,7 @@ This guide covers deploying the CSV Processor application to AWS EKS with proper
 
 ### Architecture Components
 - **EKS Cluster**: Kubernetes v1.28 with managed node groups
-- **Node Groups**: t3.large SPOT instances (2 nodes, can scale to 3)
+- **Node Groups**: t3.micro SPOT instances (2 nodes, can scale to 3)
 - **Networking**: VPC with public/private subnets across 2 AZs
 - **Storage**: EBS CSI driver with gp2 storage class
 - **Security**: IRSA for AWS service access, IMDSv2 enabled
@@ -90,10 +90,10 @@ helm install csv-processor ./helm/csv-processor -f ./helm/csv-processor/values-p
 
 ## 🔧 Instance Type Analysis
 
-### Current Configuration: t3.large
-- **Specs**: 2 vCPU, 8GB RAM
+### Current Configuration: t3.micro
+- **Specs**: 1 vCPU, 1GB RAM
 - **Network**: Up to 5 Gbps
-- **EBS**: Up to 2,880 Mbps
+- **EBS**: Up to 2,085 Mbps
 
 ### Capacity Analysis
 Your application resource requirements:
@@ -101,14 +101,16 @@ Your application resource requirements:
 - Nginx pods: 100m CPU, 128Mi memory (requests)
 - **Total per full stack**: ~350m CPU, 384Mi memory
 
-**Verdict**: ✅ **t3.large is appropriate**
-- Can handle 5-6 pod replicas comfortably
-- Aligns with HPA max of 10 replicas across 2-3 nodes
+**Verdict**: ✅ **t3.micro is appropriate**
+- Can handle 2-3 pod replicas comfortably
+- Suitable for development and light production workloads
 - SPOT pricing provides 60-70% cost savings
+- **Note**: Limited resources may require careful resource management
 
 ### Alternative Recommendations
-- **Cost-focused**: t3.medium (2 vCPU, 4GB) - sufficient for lighter workloads
-- **Performance-focused**: t3.xlarge (4 vCPU, 16GB) - for higher throughput requirements
+- **Cost-focused**: t3.small (2 vCPU, 2GB) - better balance for light production
+- **Balanced**: t3.medium (2 vCPU, 4GB) - recommended for production workloads
+- **Performance-focused**: t3.large (2 vCPU, 8GB) - for higher throughput requirements
 - **Mixed**: Use node groups with different instance types
 
 ## 🛡️ Security Improvements
@@ -184,10 +186,11 @@ kubectl describe svc csv-processor-nginx
 ## 💰 Cost Optimization
 
 ### Current Setup Cost Estimation (eu-north-1)
-- **t3.large SPOT**: ~$0.033/hour × 2 nodes = ~$48/month
+- **t3.micro SPOT**: ~$0.0031/hour × 2 nodes = ~$4.5/month
 - **EBS storage**: ~$0.10/GB/month × 100GB = ~$10/month
+- **EKS management**: ~$72/month
 - **Data transfer**: Variable based on usage
-- **Total estimated**: ~$60-80/month
+- **Total estimated**: ~$87/month
 
 ### Cost Reduction Tips
 1. Use SPOT instances (already configured)
