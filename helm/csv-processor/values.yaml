@@ -143,3 +143,53 @@ pvc:
   name: shared-static-pvc
   accessMode: ReadWriteOnce
   size: 1Gi
+
+# Ingress configuration - disabled by default for local development
+ingress:
+  enabled: false
+  ingressClassName: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: ""
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+# Security context configurations - disabled by default for local development
+podSecurityContext: {}
+  # runAsNonRoot: true
+  # runAsUser: 1000
+  # runAsGroup: 1000
+  # fsGroup: 1000
+
+securityContext: {}
+  # allowPrivilegeEscalation: false
+  # readOnlyRootFilesystem: false
+  # capabilities:
+  #   drop:
+  #   - ALL
+
+# Health check probes - disabled by default for local development
+livenessProbe: {}
+  # httpGet:
+  #   path: /
+  #   port: http
+  # initialDelaySeconds: 30
+  # periodSeconds: 30
+  # timeoutSeconds: 10
+  # failureThreshold: 3
+
+readinessProbe: {}
+  # httpGet:
+  #   path: /
+  #   port: http
+  # initialDelaySeconds: 10
+  # periodSeconds: 10
+  # timeoutSeconds: 5
+  # failureThreshold: 3
