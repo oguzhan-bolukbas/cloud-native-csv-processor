@@ -1,0 +1,20 @@
+{
+  "BudgetName": "CSV-Processor-Monthly-Budget",
+  "BudgetLimit": {
+    "Amount": "10.00",
+    "Unit": "USD"
+  },
+  "TimeUnit": "MONTHLY",
+  "TimePeriod": {
+    "Start": "2025-01-01T00:00:00Z",
+    "End": "2087-06-15T00:00:00Z"
+  },
+  "CostFilters": {},
+  "BudgetType": "COST",
+  "CalculatedSpend": {
+    "ActualSpend": {
+      "Amount": "0.00",
+      "Unit": "USD"
+    }
+  }
+}
