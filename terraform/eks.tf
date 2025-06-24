@@ -94,25 +94,58 @@ module "eks" {
   }
 
   eks_managed_node_groups = {
-    csv-processor-workers = {
-      name         = "csv-processor-workers"
+    # On-demand node group for critical system components
+    csv-processor-on-demand = {
+      name         = "csv-processor-on-demand"
+      min_size     = 1
+      max_size     = 2
+      desired_size = 1
+
+      instance_types = var.instance_types
+      capacity_type  = "ON_DEMAND"
+
+      # Node group specific configurations
+      disk_size = 50
+
+      # Taints to ensure only critical workloads run here
+      taints = {
+        critical = {
+          key    = "node-type"
+          value  = "on-demand"
+          effect = "NO_SCHEDULE"
+        }
+      }
+
+      # Labels for node selection
+      labels = {
+        role = "critical"
+        capacity-type = "on-demand"
+        node-type = "on-demand"
+      }
+
+      tags = {
+        ExtraTag = "csv-processor-critical"
+      }
+    }
+
+    # Spot node group for scalable application workloads
+    csv-processor-spot = {
+      name         = "csv-processor-spot"
       min_size     = var.node_group_min_size
       max_size     = var.node_group_max_size
       desired_size = var.node_group_desired_size
 
       instance_types = var.instance_types
-      capacity_type  = var.capacity_type
+      capacity_type  = "SPOT"
 
       # Node group specific configurations
       disk_size = 50
 
-      # Taints for dedicated workloads (optional)
-      taints = {}
-
       # Labels for node selection
       labels = {
         role = "worker"
-        instance-type = "t3-large"
+        capacity-type = "spot"
+        node-type = "spot"
       }
 
       tags = {
