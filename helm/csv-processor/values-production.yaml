@@ -10,8 +10,11 @@ image:
 
 # Service Account for IRSA
 serviceAccount:
-  create: false  # Will be created by deployment script with proper annotations
+  create: true  # Create service account in production
   name: csv-processor-sa
+  annotations:
+    # This will be set by the deployment script with actual ARN
+    eks.amazonaws.com/role-arn: ""  # Will be overridden via --set
 
 service:
   type: ClusterIP
