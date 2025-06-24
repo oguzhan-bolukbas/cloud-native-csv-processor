@@ -65,11 +65,11 @@ helm uninstall csv-processor
   - [X] Test Horizontal Pod Autoscaler (HPA) for autoscaling
   - [X] Set up metrics-server and run CPU/memory based autoscaling tests
 
-- [ ] Phase 6 – Terraform Cloud Infrastructure Setup
-  - [ ] Create VPC, subnets, and networking resources with Terraform
-  - [ ] Define EKS cluster and node groups (on-demand + spot)
-  - [ ] Configure IAM roles and OIDC provider
-  - [ ] Deploy application to cloud environment using Helm
+- [X] Phase 6 – Terraform Cloud Infrastructure Setup
+  - [X] Create VPC, subnets, and networking resources with Terraform
+  - [X] Define EKS cluster and node groups (on-demand + spot)
+  - [X] Configure IAM roles and OIDC provider
+  - [X] Deploy application to cloud environment using Helm
 
 - [ ] Phase 7 – Documentation & Architecture
   - [ ] Prepare project documentation
