@@ -402,8 +402,8 @@ type(scope): description
 
 ### Resources
 - **Project Documentation**: Check the various MD files in the repo
-- **API Reference**: See `API_DOCUMENTATION.md`
-- **Architecture**: See `ARCHITECTURE.md`
+- **API Reference**: See [API Documentation](../api/)
+- **Architecture**: See [Architecture Overview](../architecture.md)
 - **Issues**: GitHub Issues for bug reports and features
 
 ### Community
