@@ -25,7 +25,30 @@ helm uninstall csv-processor
 ---
 
 **For a complete local Kubernetes setup and secret management guide, see:**
-[Local Kubernetes & AWS Secrets Store CSI Driver Setup Guide](./LOCAL_K8S_SETUP_GUIDE.md)
+[Local Kubernetes Setup Guide](./docs/guides/deployment/local-kubernetes.md)
+
+---
+
+## 📚 Documentation
+
+**Complete documentation available in [`/docs`](./docs/)**
+
+### Quick Links
+- **[📖 Documentation Index](./docs/README.md)** - Complete navigation guide
+- **[🏗️ Architecture Overview](./docs/architecture.md)** - System design and components
+- **[👤 User Guide](./docs/guides/user-guide.md)** - How to use the application
+- **[👨‍💻 Development Guide](./docs/guides/development-guide.md)** - Setup and contribution guidelines
+- **[🔗 API Reference](./docs/api/README.md)** - Complete REST API documentation
+
+### By Category
+| Category | Documents |
+|----------|-----------|
+| **Architecture** | [System Design](./docs/architecture.md) |
+| **User Guides** | [User Guide](./docs/guides/user-guide.md) |
+| **Development** | [Development Setup](./docs/guides/development-guide.md), [API Reference](./docs/api/README.md) |
+| **Deployment** | [Local K8s](./docs/guides/deployment/local-kubernetes.md), [EKS](./docs/guides/deployment/eks-deployment.md), [AWS Setup](./docs/guides/deployment/aws-setup.md) |
+| **Operations** | [Security](./docs/operations/security.md), [Performance](./docs/operations/performance-monitoring.md) |
+| **Components** | [Helm Chart](./helm/csv-processor/README.md), [Terraform](./terraform/README.md), [HPA Testing](./hpa-testing/README.md) |
 
 ---
 
@@ -71,6 +94,6 @@ helm uninstall csv-processor
   - [X] Configure IAM roles and OIDC provider
   - [X] Deploy application to cloud environment using Helm
 
-- [ ] Phase 7 – Documentation & Architecture
-  - [ ] Prepare project documentation
-  - [ ] Create architecture diagram
+- [X] Phase 7 – Documentation & Architecture
+  - [X] Prepare project documentation
+  - [X] Create architecture diagram
