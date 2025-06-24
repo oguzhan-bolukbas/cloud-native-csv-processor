@@ -45,12 +45,12 @@ helm uninstall csv-processor
   - [X] Test AWS S3 integration locally
   - [X] Plan S3 lifecycle rules for transition to Glacier
 
-- [ ] Phase 3 – CI/CD & Image Publishing
+- [X] Phase 3 – CI/CD & Image Publishing
   - [X] Run Jenkins locally in a container for CI/CD pipeline
   - [X] Build and test Docker image automatically
   - [X] Push Docker image to DockerHub (public repository)
-  - [ ] Use the published DockerHub image for Kubernetes deployments
-  - [ ] Deploy to Kubernetes using Helm in Jenkins pipeline
+  - [X] Use the published DockerHub image for Kubernetes deployments
+  - [X] Deploy to Kubernetes using Helm in Jenkins pipeline
 
 - [X] Phase 4 – Kubernetes YAML and Helm Chart
   - [X] Write deployment manifests including Nginx and Node.js app
