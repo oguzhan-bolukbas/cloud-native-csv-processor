@@ -53,23 +53,6 @@ pipeline {
                 }
             }
         }
-        stage('Deploy to Local Kubernetes') {
-            steps {
-                script {
-                    // Deploy to local Kubernetes (Minikube)
-                    sh '''
-                        # Make sure kubectl is pointing to local cluster
-                        kubectl config current-context
-                        
-                        # Deploy using Helm to local cluster
-                        helm upgrade --install csv-processor ./helm/csv-processor \\
-                            --values ./helm/csv-processor/values-override.yaml \\
-                            --set image.tag=$BUILD_NUMBER \\
-                            --wait
-                    '''
-                }
-            }
-        }
     }
     post {
         always {
